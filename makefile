@@ -23,13 +23,17 @@ DISS:=$(patsubst $(SRCDIR)/%.c,$(DISS_DIR)/%.dis,$(CPPSRC))
 
 #include --static and the -static in the library to link statically
 #remove these to link with the shared libraries dyamically
-LIBS=/home/dman/x-tools/arm-unknown-eabi/arm-unknown-eabi/lib/crt0.o             \
-     /home/dman/x-tools/arm-unknown-eabi/arm-unknown-eabi/lib/libstdc++.a        \
-     /home/dman/x-tools/arm-unknown-eabi/arm-unknown-eabi/lib/libsupc++.a        \
-     /home/dman/x-tools/arm-unknown-eabi/arm-unknown-eabi/lib/libg.a             \
-     /home/dman/x-tools/arm-unknown-eabi/arm-unknown-eabi/lib/libm.a             \
-     /home/dman/x-tools/arm-unknown-eabi/arm-unknown-eabi/lib/librdimon.a        \
-     /home/dman/x-tools/arm-unknown-eabi/lib/gcc/arm-unknown-eabi/4.3.4/crti.o
+#LIBS=~/x-tools/arm-unknown-eabi/arm-unknown-eabi/lib/crt0.o             \ 
+     #~/x-tools/arm-unknown-eabi/arm-unknown-eabi/lib/libstdc++.a        \
+     #~/x-tools/arm-unknown-eabi/arm-unknown-eabi/lib/libsupc++.a        \
+     #~/x-tools/arm-unknown-eabi/arm-unknown-eabi/lib/libg.a             \
+     #~/x-tools/arm-unknown-eabi/arm-unknown-eabi/lib/libm.a             \
+     #~/x-tools/arm-unknown-eabi/arm-unknown-eabi/lib/librdimon.a        \
+     #~/x-tools/arm-unknown-eabi/lib/gcc/arm-unknown-eabi/4.3.4/crti.o
+
+LIBS=~/x-tools/arm-unknown-eabi/arm-unknown-eabi/lib/crt0.o             \
+     ~/x-tools/arm-unknown-eabi/arm-unknown-eabi/lib/libg.a             \
+     ~/x-tools/arm-unknown-eabi/lib/gcc/arm-unknown-eabi/4.3.4/crti.o
 
 
 #rule for a target
@@ -62,7 +66,7 @@ $(ASOBJS):
 #link all object files to create executable
 $(TARGET): $(CPPOBJS) $(ASOBJS)
 	@echo
-	$(LINKER) -o $@ $(CPPOBJS) $(ASOBJS) $(LIBS) --verbose -lc
+	$(LINKER) -o $@ $(CPPOBJS) $(ASOBJS) $(LIBS) --verbose -nostartfiles -nostdlib -nodefaultlibs 
 
 #in bash, $$ means expand to shell process ID.
 #This guarantees uniqueness of a file name
