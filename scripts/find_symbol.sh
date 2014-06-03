@@ -26,7 +26,7 @@ files_found=$(find ${directories} -type f -iname "*.a" -o -iname "*.o")
 while read file_name
 do
 #echo "Looking in ${file_name}"
-nm $file_name 2>/dev/null | grep --color "${symbol_to_find}" 2>/dev/null
+arm-unknown-eabi-nm $file_name 2>/dev/null | grep --color "${symbol_to_find}" 2>/dev/null
 if [ $? == 0 ]; then
 echo "Found in $file_name"
 fi

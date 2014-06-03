@@ -3,6 +3,7 @@ CC=arm-unknown-eabi-gcc
 AS=arm-unknown-eabi-as
 LINKER=arm-unknown-eabi-ld
 OBJDUMP=arm-unknown-eabi-objdump
+SYMBOLDUMP=arm-unknown-eabi-nm
 DISS_EXT=.dis
 DISS_DIR=disassembly
 COMPILEFLAGS=-c
@@ -54,6 +55,9 @@ $(CPPOBJS):
 	$(OBJDUMP) -t $@ >> ./$(DISS_DIR)/$(subst $(ODIR)/,,$*)$(DISS_EXT)
 	$(OBJDUMP) -s $@ >> ./$(DISS_DIR)/$(subst $(ODIR)/,,$*)$(DISS_EXT)
 	$(OBJDUMP) -d $@ >> ./$(DISS_DIR)/$(subst $(ODIR)/,,$*)$(DISS_EXT)
+	@echo "\n-----------------Symbol Dump-----------------" >> \
+		./$(DISS_DIR)/$(subst $(ODIR)/,,$*)$(DISS_EXT)
+	$(SYMBOLDUMP) $@ >> ./$(DISS_DIR)/$(subst $(ODIR)/,,$*)$(DISS_EXT)
 
 $(ASOBJS):
 	$(AS) $(CURRENT_AS_TARGET) -o $@
@@ -61,12 +65,16 @@ $(ASOBJS):
 	$(OBJDUMP) -t $@ >> ./$(DISS_DIR)/$(subst $(ODIR)/,,$*)$(DISS_EXT)
 	$(OBJDUMP) -s $@ >> ./$(DISS_DIR)/$(subst $(ODIR)/,,$*)$(DISS_EXT)
 	$(OBJDUMP) -d $@ >> ./$(DISS_DIR)/$(subst $(ODIR)/,,$*)$(DISS_EXT)
-
+	@echo "\n-----------------Symbol Dump-----------------" >> \
+		./$(DISS_DIR)/$(subst $(ODIR)/,,$*)$(DISS_EXT)
+	$(SYMBOLDUMP) $@ >> ./$(DISS_DIR)/$(subst $(ODIR)/,,$*)$(DISS_EXT)
 
 #link all object files to create executable
 $(TARGET): $(CPPOBJS) $(ASOBJS)
 	@echo
-	$(LINKER) -o $@ $(CPPOBJS) $(ASOBJS) $(LIBS) --verbose -nostartfiles -nostdlib -nodefaultlibs 
+	#the -M option generates a map file
+	$(LINKER) -o $@ $(CPPOBJS) $(ASOBJS) $(LIBS) -M --verbose -nostartfiles -nostdlib -nodefaultlibs > Map.m
+	#after linking, run the above objdump and nm dump programs on this object file, to get the full dissembly
 
 #in bash, $$ means expand to shell process ID.
 #This guarantees uniqueness of a file name
